@@ -45,6 +45,8 @@ export class GloveApiService implements OnDestroy {
   canvasLoaded = false;
   sticky: any;
   stickyView: any;
+  defaultFill = "#c0c0c0";
+  strokeFill = "#c0c0c0";
 
   constructor(private customData: GloveDataService) {
     //this.colors = gloveColor;
@@ -178,8 +180,8 @@ export class GloveApiService implements OnDestroy {
       this.sticky.attr({ viewBox: "0 0 400 400" });
     }
 
-    // $(document).ready(addSticky)
-    //   this.sticky.append(this.svgMain.clone());
+    $(document).ready(addSticky)
+      this.sticky.append(this.svgMain.clone());
   }
 
   // ** Function run to return current glove section and color chosen to render in glove canvas */
@@ -216,13 +218,13 @@ export class GloveApiService implements OnDestroy {
   }
 
   applyFillToCanvas(sectionToFill, colorValue, gloveType) {
-    // if( this.sticky === undefined ){
-    //   console.log('Initiate Sticky')
-    //   this.sticky = Snap("#nystix-sticky");
-    //   //
-    // } else {
-    //   this.sticky.append(this.svgMain.clone())
-    // }
+    if( this.sticky === undefined ){
+      console.log('Initiate Sticky')
+      this.sticky = Snap("#nystix-sticky");
+      //
+    } else {
+      this.sticky.append(this.svgMain.clone())
+    }
 
     let main = (element: string) => {
       if ($(element).length != 0) {
@@ -237,9 +239,9 @@ export class GloveApiService implements OnDestroy {
           });
         }
       }
-      // setTimeout(() => {
-      //   this.sticky.append(this.svgMain.clone())
-      // }, 1000);
+      setTimeout(() => {
+        this.sticky.append(this.svgMain.clone())
+      }, 1000);
 
     };
     let inside = (element: string) => {
@@ -399,6 +401,34 @@ export class GloveApiService implements OnDestroy {
 
     //( document.getElementById(element) as HTMLInputElement).value = value;
   }
+
+  //** Sets default color of loaded glove */
+  defaultColor = (l, el, grp) => {
+    switch (true) {
+      case l.includes("logo"):
+        el.attr({ fill: this.defaultFill, id: l });
+        grp.add(el);
+        break;
+      case l.includes("stch"):
+        el.attr({ fill: "none", id: l, stroke: this.strokeFill });
+        grp.add(el);
+        break;
+      case l.includes("rse"):
+        el.attr({ fill: this.defaultFill, id: l, opacity: 1 });
+        grp.add(el);
+
+        break;
+      case l.includes("elt"):
+        el.attr({ fill: this.defaultFill, id: l, opacity: 0 });
+        grp.add(el);
+        break;
+      default:
+        el.attr({ fill: "#696969", id: l });
+        grp.add(el);
+        break;
+    }
+  };
+
   // ** Loads Catcher's mitt glove canvas */
   loadCatcher() {
     const self = this;
@@ -425,17 +455,10 @@ export class GloveApiService implements OnDestroy {
         ];
         const layer = p[i];
 
-        // Apply default fills & add to group
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
+        self.defaultColor(layer, el, self.oView);
 
         self.oView.add(el);
         self.svgMain.append(self.oView);
-        // self.cloneCanvas();
-        // self.defaultColor();
       });
     });
 
@@ -459,16 +482,10 @@ export class GloveApiService implements OnDestroy {
         ];
         const layer = p[i];
 
-        // Apply default fills & add to group
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
+        self.defaultColor(layer, el, self.iView);
 
         self.iView.add(el);
         self.svgInside.append(self.iView);
-        // self.defaultColor();
       });
     });
 
@@ -492,17 +509,10 @@ export class GloveApiService implements OnDestroy {
           "catcher-mitt_x5F_side_x5F_view",
         ];
         const layer = p[i];
-
-        // Apply default fills & add to group
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
+        self.defaultColor(layer, el, self.sView);
 
         self.sView.add(el);
         self.svgSide.append(self.sView);
-        // self.defaultColor();
       });
     });
   }
@@ -537,13 +547,7 @@ export class GloveApiService implements OnDestroy {
           "of_x5F_open_x5F_back",
         ];
         const layer = p[i];
-
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
-
+        self.defaultColor(layer, el, self.oView);
         self.oView.add(el);
         self.svgMain.append(self.oView);
         // self.defaultColor();
@@ -577,12 +581,7 @@ export class GloveApiService implements OnDestroy {
           "of_x5F_open_x5F_pocket",
         ];
         const layer = p[i];
-
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
+        self.defaultColor(layer, el, self.iView);
 
         self.iView.add(el);
         self.svgInside.append(self.iView);
@@ -612,13 +611,7 @@ export class GloveApiService implements OnDestroy {
           "of_x5F_side_x5F_view",
         ];
         const layer = p[i];
-
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
-
+        self.defaultColor(layer, el, self.sView);
         self.sView.add(el);
         self.svgSide.append(self.sView);
         // self.defaultColor();
@@ -658,13 +651,7 @@ export class GloveApiService implements OnDestroy {
         ];
         const layer = p[i];
         const filter = layer.split("_").pop();
-
-        // Apply default fills & add to group
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
+        self.defaultColor(layer, el, self.oView);
 
         self.oView.add(el);
         self.svgMain.append(self.oView);
@@ -697,13 +684,7 @@ export class GloveApiService implements OnDestroy {
           "inf_x5F_open_x5F_pocket",
         ];
         const layer = p[i];
-
-        // Apply default fills & add to group
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
+        self.defaultColor(layer, el, self.iView);
 
         self.iView.add(el);
         self.svgInside.append(this.iView);
@@ -735,14 +716,7 @@ export class GloveApiService implements OnDestroy {
           "inf_x5F_open_x5F_side",
         ];
         const layer = p[i];
-
-        // Apply default fills & add to group
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' , stroke:'#FFFAFA'});
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        //   console.log(el)
-        // }
+        self.defaultColor(layer, el, self.sView);
 
         self.sView.add(el);
         self.svgSide.append(self.sView);
@@ -776,13 +750,7 @@ export class GloveApiService implements OnDestroy {
         ];
         const layer = p[i];
         const filter = layer.split("_").pop();
-
-        // Apply default fills & add to group
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
+        self.defaultColor(layer, el, self.oView);
 
         self.oView.add(el);
         self.svgMain.append(self.oView);
@@ -806,6 +774,7 @@ export class GloveApiService implements OnDestroy {
           "fbase_x5F_open_x5F_pocket",
         ];
         const layer = p[i];
+        self.defaultColor(layer, el, self.iView);
         self.iView.add(el);
         self.svgInside.append(self.iView);
       });
@@ -833,13 +802,7 @@ export class GloveApiService implements OnDestroy {
           "fbase_x5F_side_x5F_view",
         ];
         const layer = p[i];
-
-        // Apply default fills & add to group
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
+        self.defaultColor(layer, el, self.sView);
 
         self.sView.add(el);
         self.svgSide.append(self.sView);
@@ -872,12 +835,7 @@ export class GloveApiService implements OnDestroy {
         ];
         const layer = p[i];
 
-        // Apply default fills & add to group
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
+        self.defaultColor(layer, el, self.oView);
 
         // Apply default fills & add to group
         self.oView.add(el);
@@ -907,13 +865,7 @@ export class GloveApiService implements OnDestroy {
             "catcher-fastback_x5F_rise_x5F_logo",
           ];
           const layer = p[i];
-
-          // Apply default fills & add to group
-          // if (_.includes(layer, 'stch')) {
-          //   el.attr({ fill: 'none' });
-          // } else {
-          //   el.attr({ fill: '#FFFAFA' });
-          // }
+          self.defaultColor(layer, el, self.iView);
 
           self.iView.add(el);
           self.svgInside.append(self.iView);
@@ -943,13 +895,7 @@ export class GloveApiService implements OnDestroy {
           "catcher-fastback_x5F_vw1_x5F_fastback_x5F_side",
         ];
         const layer = p[i];
-
-        // Apply default fills & add to group
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
+        self.defaultColor(layer, el, self.sView);
 
         // Apply default fills & add to group
         self.sView.add(el);
@@ -990,12 +936,7 @@ export class GloveApiService implements OnDestroy {
         const layer = p[i];
         const filter = layer.split("_").pop();
 
-        if (_.includes(layer, "stch")) {
-          el.attr({ fill: "none" });
-          el.attr({ stroke: "#FFFAFA" });
-        } else {
-          el.attr({ fill: "#FFFAFA" });
-        }
+        self.defaultColor(layer, el, self.oView);
 
         self.oView.add(el);
         self.svgMain.append(self.oView);
@@ -1021,11 +962,7 @@ export class GloveApiService implements OnDestroy {
           "inf_dw_x5F_dwelt_x5F_inside",
         ];
         const layer = p[i];
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
+        self.defaultColor(layer, el, self.iView);
 
         self.iView.add(el);
         self.svgInside.append(this.iView);
@@ -1056,11 +993,7 @@ export class GloveApiService implements OnDestroy {
           "inf_dw_x5F_vw1_x5F_logo, inf_dw_x5F_dwelt_x5F_side",
         ];
         const layer = p[i];
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
+        self.defaultColor(layer, el, self.sView);
 
         self.sView.add(el);
         self.svgSide.append(self.sView);
@@ -1106,13 +1039,7 @@ export class GloveApiService implements OnDestroy {
         ];
         const layer = p[i];
         const filter = layer.split("_").pop();
-
-        // Apply default fills & add to group
-        // if (_.includes(layer, 'stch')) {
-        //   el.attr({ fill: 'none' });
-        // } else {
-        //   el.attr({ fill: '#FFFAFA' });
-        // }
+        self.defaultColor(layer, el, self.oView);
 
         self.oView.add(el);
         self.svgMain.append(self.oView);
@@ -1144,8 +1071,7 @@ export class GloveApiService implements OnDestroy {
         ];
         const layer = p[i];
 
-        // Apply default fills & add to group
-        // self.defaultColor(p[i], el, self.iView);
+        self.defaultColor(layer, el, self.sView);
 
         self.iView.add(el);
         self.svgInside.append(self.iView);
