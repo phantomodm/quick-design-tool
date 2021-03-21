@@ -1,0 +1,48 @@
+.main {
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  padding-bottom: 10px;
+}
+
+/*.nystix-image-container {
+ background: #8080805e;
+ background: #000000bd; } */
+
+.nystix-product-details {
+  background: rgb(248, 245, 245);
+}
+
+.nystix-product-details,
+.nystix-image-container {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.nystix-image-container,
+.nystix-product-details {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.summary {
+  display:none;
+}
+
+
+@media (min-width:576px){
+  .nystix-image-container,
+  .nystix-product-details {
+      flex: 1.2 0;
+  }
+}
+@media (min-width: 992px){
+  .nystix-image-container,
+  .nystix-product-details {
+      flex: 0 0 50%;
+      max-width: 50%;
+  }
+}

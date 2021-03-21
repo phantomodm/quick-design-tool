@@ -14,6 +14,8 @@
  * Learn more in https://angular.io/guide/browser-support
  */
 
+ import '@angular/localize/init';
+
 /***************************************************************************************************
  * BROWSER POLYFILLS
  */
@@ -61,3 +63,5 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+ import 'document-register-element';
