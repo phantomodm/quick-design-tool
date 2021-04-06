@@ -12,6 +12,7 @@ export class ImageCarouselComponent implements OnInit {
   showNavigationArrows = true;
   constructor(config: NgbCarouselConfig) {
     config.showNavigationArrows = true;
+    config.showNavigationIndicators = false;
    }
 
   ngOnInit(): void {

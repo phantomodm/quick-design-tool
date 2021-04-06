@@ -1,3 +1,6 @@
+label {
+  font-weight: 500;
+}
 .add-to-cart {
   border-color: #3bb54a;
   background-color: #3bb54a;
@@ -58,4 +61,8 @@
 
 .form-group > i {
   margin: 0.25rem;
+}
+
+.form-group {
+  margin-bottom: 10px;
 }

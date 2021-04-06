@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { ScriptsStore } from './services/script-store.service'
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -8,4 +7,13 @@ import { ScriptsStore } from './services/script-store.service'
 })
 export class AppComponent {
   title = 'quick-design-tool';
+  @Input() profile:string;
+  @Input() glove: string;
+  @Input() name: string;
+  @Input() price: string;
+  @Input() price2: string;
+
+  constructor(){
+
+  }
 }

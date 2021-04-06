@@ -12,18 +12,18 @@ import { ScriptsStore } from '../services/script-store.service';
 export class MainComponent implements OnInit , AfterViewInit{
   private unsubscribe$ = new Subject<boolean>();
 
-  @Input() profile:string;
+  @Input() profile: string;
   @Input() glove: string;
   @Input() name: string;
   @Input() price: string;
   @Input() price2: string;
+  @Input() product: string;
 
   watcher$ = false;
   gloveType: { name: string; type: string; }[];
 
   constructor(private gloveApi: GloveApiService, private scripts:ScriptsStore) {
-
-      this.scripts.load('jQuery').then(data => console.log('script loaded' + data)).catch(error => console.log(error))
+      this.scripts.load('jQuery','bootstrap').then(data => console.log('Script loaded' + data)).catch(error => console.log(error))
 
   }
 
@@ -31,11 +31,13 @@ export class MainComponent implements OnInit , AfterViewInit{
     this.gloveType = [
       { name: "dual welt glove", type: "inf_dw" },
       { name: "outfield glove", type: "of" },
-      { name: "catcher mitt", type: "catcher-mitt" },
+      { name: "catcher mitt", type: "cm" },
       { name: "fastback catcher mitt", type: "catcher-fastback" },
       { name: "first base mitt", type: "fbase" },
       { name: "infield glove", type: "inf" },
     ];
+
+    console.log('Glove Received, ver 1.0.3')
 
   }
 

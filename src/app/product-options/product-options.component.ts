@@ -1,9 +1,9 @@
-import { Component, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { GloveApiService } from "src/app/services/glove-api-service";
 import { DomSanitizer } from "@angular/platform-browser";
 import * as _ from "lodash";
 import { Subject } from "rxjs";
-import { take, takeUntil, distinctUntilChanged } from "rxjs/operators";
+import { take, takeUntil, distinctUntilChanged } from "rxjs/operators";import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 
 declare var $;
 
@@ -16,9 +16,9 @@ declare var $;
 export class ProductOptionsComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<boolean>();
   @ViewChild('') personalization: HTMLInputElement;
-  @Input('') price;
-  @Input('') name;
-  @Input('') price2;
+  @Input() name;
+  @Input() price;
+  @Input() price2;
 
 
   gloveData;
@@ -44,9 +44,7 @@ export class ProductOptionsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.gloveData = this.gloveApi.gloveInputOptions$;
-    this.price = "1.00"
-    this.price2 = "1.00"
-    this.name = "test"
+
   }
 
   inputPersonalization(input:string){

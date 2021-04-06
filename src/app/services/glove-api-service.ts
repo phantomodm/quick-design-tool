@@ -46,7 +46,7 @@ export class GloveApiService implements OnDestroy {
   sticky: any;
   stickyView: any;
   defaultFill = "#c0c0c0";
-  strokeFill = "#c0c0c0";
+  strokeFill = "#808080";
 
   constructor(private customData: GloveDataService) {
     //this.colors = gloveColor;
@@ -119,7 +119,7 @@ export class GloveApiService implements OnDestroy {
     console.log("Snap initiated");
 
     switch (this.imageBase) {
-      case "catcher-mitt":
+      case "cm":
         this.loadCatcher();
         this.gloveTypeWatcher.next("catcher");
         break;
@@ -152,25 +152,25 @@ export class GloveApiService implements OnDestroy {
         break;
     }
 
-    console.log(" Before random call");
-    const _timer = timer(2500);
-    const runner = _timer.subscribe((val) => {
-      _.forEach(this.data, (v,k) => {
-        const fill = _.random(0, this.colorsHex.length - 1);
-        switch (k) {
-          case "body":
-          case "trim":
-          case "accent":
-            this.applyFillToCanvas(k, this.colorsHex[fill], this.imageBase);
-            break;
-          case "logo":
-            this.applyFillToCanvas(k, "#c5b358", this.imageBase);
-            break;
-          default:
-            break;
-        }
-      });
-    });
+    // console.log(" Before random call");
+    // const _timer = timer(2500);
+    // const runner = _timer.subscribe((val) => {
+    //   _.forEach(this.data, (v,k) => {
+    //     const fill = _.random(0, this.colorsHex.length - 1);
+    //     switch (k) {
+    //       case "body":
+    //       case "trim":
+    //       case "accent":
+    //         this.applyFillToCanvas(k, "red", this.imageBase);
+    //         break;
+    //       case "logo":
+    //         this.applyFillToCanvas(k, "#c5b358", this.imageBase);
+    //         break;
+    //       default:
+    //         break;
+    //     }
+    //   });
+    // });
 
     this.canvasLoaded = true;
 
@@ -181,8 +181,10 @@ export class GloveApiService implements OnDestroy {
     }
 
     $(document).ready(addSticky)
-      this.sticky.append(this.svgMain.clone());
-  }
+      if( $("#nystix-sticky").length ){
+        this.sticky.append(this.svgMain.clone());
+      }
+    }
 
   // ** Function run to return current glove section and color chosen to render in glove canvas */
   getSelectedColorHex(colorString) {
@@ -218,12 +220,17 @@ export class GloveApiService implements OnDestroy {
   }
 
   applyFillToCanvas(sectionToFill, colorValue, gloveType) {
-    if( this.sticky === undefined ){
-      console.log('Initiate Sticky')
-      this.sticky = Snap("#nystix-sticky");
-      //
-    } else {
-      this.sticky.append(this.svgMain.clone())
+    try {
+      if( this.sticky === undefined ){
+        console.log('Initiate Sticky')
+        this.sticky = Snap("#nystix-sticky");
+        //
+      } else {
+        this.sticky.append(this.svgMain.clone())
+      }
+
+    } catch (error) {
+      console.log("Sticky Bar Not Enabled")
     }
 
     let main = (element: string) => {
@@ -240,7 +247,9 @@ export class GloveApiService implements OnDestroy {
         }
       }
       setTimeout(() => {
-        this.sticky.append(this.svgMain.clone())
+        if ($("#nystix-sticky").length ){
+          this.sticky.append(this.svgMain.clone())
+        }
       }, 1000);
 
     };
@@ -262,6 +271,7 @@ export class GloveApiService implements OnDestroy {
     let side = (element: string) => {
       if ($(element).length != 0) {
         if (_.includes(element, "stch")) {
+          console.log(element)
           self.svgSide.select(element).attr({ fill: "none", stroke: fillHex });
         } else {
           gsap.to(element, 1, {
@@ -277,12 +287,13 @@ export class GloveApiService implements OnDestroy {
     const bodyPart = sectionToFill;
     const fillHex = colorValue;
     const glveType = gloveType;
-    const fillObj = Object.assign({}, self.data);
+    const fillObj = Object.assign({}, self.data);console.log(gloveType)
 
     _.forEach(this.canvas, (value, key) => {
       const el = value.element;
       const svgLayerId = value.svgBase;
       const svgElement = `#${glveType}${svgLayerId}`;
+
       switch (bodyPart) {
         case "body":
           _.forEach(fillObj.body, (f) => {
@@ -405,25 +416,13 @@ export class GloveApiService implements OnDestroy {
   //** Sets default color of loaded glove */
   defaultColor = (l, el, grp) => {
     switch (true) {
-      case l.includes("logo"):
-        el.attr({ fill: this.defaultFill, id: l });
-        grp.add(el);
-        break;
-      case l.includes("stch"):
-        el.attr({ fill: "none", id: l, stroke: this.strokeFill });
-        grp.add(el);
-        break;
-      case l.includes("rse"):
-        el.attr({ fill: this.defaultFill, id: l, opacity: 1 });
-        grp.add(el);
 
-        break;
-      case l.includes("elt"):
-        el.attr({ fill: this.defaultFill, id: l, opacity: 0 });
+      case l.includes("stch"):
+        el.attr({ fill: "none", id: l, stroke: this.defaultFill });
         grp.add(el);
         break;
       default:
-        el.attr({ fill: "#696969", id: l });
+        el.attr({ fill: this.defaultFill, id: l });
         grp.add(el);
         break;
     }
@@ -432,29 +431,29 @@ export class GloveApiService implements OnDestroy {
   // ** Loads Catcher's mitt glove canvas */
   loadCatcher() {
     const self = this;
-    Snap.load("//nystix.com/wp-content/uploads/2021/01/nys_catcher_back_view.svg", (f) => {
+    Snap.load("https://nystix.com/wp-content/uploads/2021/01/nys_catcher_back_view.svg", (f) => {
       this.svgMain.attr({ viewBox: "0 0 400 400" });
 
       const g = f.selectAll(
-        "#catcher-mitt_x5F_vw3_x5F_utoe, #catcher-mitt_x5F_vw3_x5F_thb, #catcher-mitt_x5F_vw3_x5F_bfg, #catcher-mitt_x5F_vw3_x5F_web, #catcher-mitt_x5F_vw3_x5F_plm, #catcher-mitt_x5F_vw3_x5F_lin, #catcher-mitt_x5F_vw3_x5F_bnd, #catcher-mitt_x5F_vw3_x5F_fpad, #catcher-mitt_x5F_vw3_x5F_stch, #catcher-mitt_x5F_vw3_x5F_lce, #catcher-mitt_x5F_vw3_x5F_logo, #catcher-mitt_x5F_open_x5F_back"
+        "#cm_x5F_vw3_x5F_utoe, #cm_x5F_vw3_x5F_thb, #cm_x5F_vw3_x5F_bfg, #cm_x5F_vw3_x5F_web, #cm_x5F_vw3_x5F_plm, #cm_x5F_vw3_x5F_lin, #cm_x5F_vw3_x5F_bnd, #cm_x5F_vw3_x5F_fpad, #cm_x5F_vw3_x5F_stch, #cm_x5F_vw3_x5F_lce, #cm_x5F_vw3_x5F_logo, #cm_x5F_open_x5F_back"
       );
       g.forEach(function (el, i) {
         const p = [
-          "catcher-mitt_x5F_vw3_x5F_utoe",
-          "catcher-mitt_x5F_vw3_x5F_thb",
-          "catcher-mitt_x5F_vw3_x5F_bfg",
-          "catcher-mitt_x5F_vw3_x5F_web",
-          "catcher-mitt_x5F_vw3_x5F_plm",
-          "catcher-mitt_x5F_vw3_x5F_lin",
-          "catcher-mitt_x5F_vw3_x5F_bnd",
-          "catcher-mitt_x5F_vw3_x5F_fpad",
-          "catcher-mitt_x5F_vw3_x5F_stch",
-          "catcher-mitt_x5F_vw3_x5F_lce",
-          "catcher-mitt_x5F_vw3_x5F_logo",
-          "#catcher-mitt_x5F_open_xF_back",
+          "cm_x5F_vw3_x5F_utoe",
+          "cm_x5F_vw3_x5F_thb",
+          "cm_x5F_vw3_x5F_bfg",
+          "cm_x5F_vw3_x5F_web",
+          "cm_x5F_vw3_x5F_plm",
+          "cm_x5F_vw3_x5F_lin",
+          "cm_x5F_vw3_x5F_bnd",
+          "cm_x5F_vw3_x5F_fpad",
+          "cm_x5F_vw3_x5F_stch",
+          "cm_x5F_vw3_x5F_lce",
+          "cm_x5F_vw3_x5F_logo",
+          "cm_x5F_open_xF_back",
         ];
-        const layer = p[i];
-
+        const layer = p[i].replace('cm','cm');
+        console.log(layer)
         self.defaultColor(layer, el, self.oView);
 
         self.oView.add(el);
@@ -462,23 +461,21 @@ export class GloveApiService implements OnDestroy {
       });
     });
 
-    Snap.load("//nystix.com/wp-content/uploads/2021/02/nys_catcher_inside_view.svg", (f) => {
+    Snap.load("https://nystix.com/wp-content/uploads/2021/01/nys_catcher_inside_view.svg", (f) => {
       this.svgInside.attr({ viewBox: "0 0 400 400" });
       const g = f.selectAll(
-        "#catcher-mitt_x5F_vw2_x5F_plm, #catcher-mitt_x5F_vw2_x5F_web, #catcher-mitt_x5F_vw2_x5F_tgt, #catcher-mitt_x5F_vw2_x5F_stch, #catcher-mitt_x5F_vw2_x5F_bnd, #catcher-mitt_x5F_vw2_x5F_lce, #catcher-mitt_x5F_pocket_x5F_view, #catcher-mitt_x5F_vw2_x5F_rse, #catcher-mitt_x5F_rise_x5F_logo"
+        "#cm_x5F_vw2_x5F_plm, #cm_x5F_vw2_x5F_web, #cm_x5F_vw2_x5F_tgt, #cm_x5F_vw2_x5F_stch, #cm_x5F_vw2_x5F_bnd, #cm_x5F_vw2_x5F_lce, #cm_x5F_pocket_x5F_view"
       );
 
       g.forEach((el, i) => {
         const p = [
-          "catcher-mitt_x5F_vw2_x5F_plm",
-          "catcher-mitt_x5F_vw2_x5F_web",
-          "catcher-mitt_x5F_vw2_x5F_tgt",
-          "catcher-mitt_x5F_vw2_x5F_stch",
-          "catcher-mitt_x5F_vw2_x5F_bnd",
-          "catcher-mitt_x5F_vw2_x5F_lce",
-          "catcher-mitt_x5F_pocket_x5F_view",
-          "catcher-mitt_x5F_vw2_x5F_rse",
-          "catcher-mitt__x5F_rise_x5F_logo",
+          "cm_x5F_vw2_x5F_plm",
+          "cm_x5F_vw2_x5F_web",
+          "cm_x5F_vw2_x5F_tgt",
+          "cm_x5F_vw2_x5F_stch",
+          "cm_x5F_vw2_x5F_bnd",
+          "cm_x5F_vw2_x5F_lce",
+          "cm_x5F_pocket_x5F_view"
         ];
         const layer = p[i];
 
@@ -489,24 +486,24 @@ export class GloveApiService implements OnDestroy {
       });
     });
 
-    Snap.load("//nystix.com/wp-content/uploads/2021/01/nys_catcher_side_view.svg", (f) => {
+    Snap.load("https://nystix.com/wp-content/uploads/2021/01/nys_catcher_side_view.svg", (f) => {
       this.svgSide.attr({ viewBox: "0 0 400 400" });
       const g = f.selectAll(
-        "#catcher-mitt_x5F_vw1_x5F_utoe, #catcher-mitt_x5F_vw1_x5F_thb, #catcher-mitt_x5F_vw1_x5F_logo, #catcher-mitt_x5F_vw1_x5F_bnd, #catcher-mitt_x5F_vw1_x5F_plm, #catcher-mitt_x5F_vw1_x5F_web, #catcher-mitt_x5F_vw1_x5F_fpad, #catcher-mitt_x5F_vw1_x5F_stch, #catcher-mitt_x5F_vw1_x5F_lce, #catcher-mitt_x5F_side_x5F_view"
+        "#cm_x5F_vw1_x5F_utoe, #cm_x5F_vw1_x5F_thb, #cm_x5F_vw1_x5F_logo, #cm_x5F_vw1_x5F_bnd, #cm_x5F_vw1_x5F_plm, #cm_x5F_vw1_x5F_web, #cm_x5F_vw1_x5F_fpad, #cm_x5F_vw1_x5F_stch, #cm_x5F_vw1_x5F_lce, #cm_x5F_side_x5F_view"
       );
 
       g.forEach((el, i) => {
         const p = [
-          "catcher-mitt_x5F_vw1_x5F_utoe",
-          "catcher-mitt_x5F_vw1_x5F_thb",
-          "catcher-mitt_x5F_vw1_x5F_logo",
-          "catcher-mitt_x5F_vw1_x5F_bnd",
-          "catcher-mitt_x5F_vw1_x5F_plm",
-          "catcher-mitt_x5F_vw1_x5F_web",
-          "catcher-mitt_x5F_vw1_x5F_fpad",
-          "catcher-mitt_x5F_vw1_x5F_stch",
-          "catcher-mitt_x5F_vw1_x5F_lce",
-          "catcher-mitt_x5F_side_x5F_view",
+          "cm_x5F_vw1_x5F_utoe",
+          "cm_x5F_vw1_x5F_thb",
+          "cm_x5F_vw1_x5F_logo",
+          "cm_x5F_vw1_x5F_bnd",
+          "cm_x5F_vw1_x5F_plm",
+          "cm_x5F_vw1_x5F_web",
+          "cm_x5F_vw1_x5F_fpad",
+          "cm_x5F_vw1_x5F_stch",
+          "cm_x5F_vw1_x5F_lce",
+          "cm_x5F_side_x5F_view",
         ];
         const layer = p[i];
         self.defaultColor(layer, el, self.sView);
@@ -520,7 +517,7 @@ export class GloveApiService implements OnDestroy {
   // ** Loads outfield glove canvas */
   loadOutfield() {
     const self = this;
-    Snap.load("//nystix.com/wp-content/uploads/2021/01/nys_outfield_back_view.svg", (f) => {
+    Snap.load("https://nystix.com/wp-content/uploads/2021/01/nys_outfield_back_view.svg", (f) => {
       this.svgMain.attr({ viewBox: "0 0 400 400" });
       // this.gloveCloneMainVertical.attr({ viewBox: "0 0 400 400" });
       const g = f.selectAll(
@@ -554,7 +551,7 @@ export class GloveApiService implements OnDestroy {
       });
     });
 
-    Snap.load("//nystix.com/wp-content/uploads/2021/02/nys_outfield_inside_view.svg", (f) => {
+    Snap.load("https://nystix.com/wp-content/uploads/2021/02/nys_outfield_inside_view.svg", (f) => {
       this.svgInside.attr({ viewBox: "0 0 400 400" });
       // this.gloveCloneInsideVertical.attr({ viewBox: "0 0 400 400" });
       const g = f.selectAll(
@@ -588,17 +585,16 @@ export class GloveApiService implements OnDestroy {
       });
     });
 
-    Snap.load("//nystix.com/wp-content/uploads/2021/01/nys_outfield_side_view.svg", (f) => {
+    Snap.load("https://nystix.com/wp-content/uploads/2021/01/nys_outfield_side_view.svg", (f) => {
       this.svgSide.attr({ viewBox: "0 0 400 400" });
       // this.gloveCloneSideVertical.attr({ viewBox: "0 0 400 400" });
       const g = f.selectAll(
-        "#of_x5F_vw1_x5F_wst,#of_x5F_vw1_x5F_logo, #of_x5F_vw1_x5F_thbi, #of_x5F_vw1_x5F_thbo, #of_x5F_vw1_x5F_indo, #of_x5F_vw1_x5F_plm,#of_x5F_vw1_x5F_web, #of_x5F_vw1_x5F_bnd, #of_x5F_vw1_x5F_wlt, #of_x5F_vw1_x5F_stch, #of_x5F_vw1_x5F_lce, #of_x5F_side_x5F_view"
+        "#of_x5F_vw1_x5F_wst, #of_x5F_vw1_x5F_thbo, #of_x5F_vw1_x5F_thbi, #of_x5F_vw1_x5F_indo, #of_x5F_vw1_x5F_plm,#of_x5F_vw1_x5F_web, #of_x5F_vw1_x5F_bnd, #of_x5F_vw1_x5F_wlt, #of_x5F_vw1_x5F_stch, #of_x5F_vw1_x5F_lce, #of_x5F_side_x5F_view"
       );
 
       g.forEach((el, i) => {
         const p = [
           "of_x5F_vw1_x5F_wst",
-          "of_x5F_vw1_x5F_logo",
           "of_x5F_vw1_x5F_thbi",
           "of_x5F_vw1_x5F_thbo",
           "of_x5F_vw1_x5F_indo",
@@ -623,7 +619,7 @@ export class GloveApiService implements OnDestroy {
   loadInfield() {
     const self = this;
 
-    Snap.load("//nystix.com/wp-content/uploads/2021/01/nys_infield_swelt_back.svg", (f) => {
+    Snap.load("https://nystix.com/wp-content/uploads/2021/01/nys_infield_swelt_back.svg", (f) => {
       this.svgMain.attr({ viewBox: "0 0 400 400" });
 
       const g = f.selectAll(
@@ -650,7 +646,7 @@ export class GloveApiService implements OnDestroy {
           "inf_x5F_open_x5F_back",
         ];
         const layer = p[i];
-        const filter = layer.split("_").pop();
+        // const filter = layer.split("_").pop();
         self.defaultColor(layer, el, self.oView);
 
         self.oView.add(el);
@@ -658,7 +654,7 @@ export class GloveApiService implements OnDestroy {
       });
     });
 
-    Snap.load("//nystix.com/wp-content/uploads/2021/01/nys_infield_swelt_pocket.svg", (f) => {
+    Snap.load("https://nystix.com/wp-content/uploads/2021/01/nys_infield_swelt_pocket.svg", (f) => {
       this.svgInside.attr({ viewBox: "0 0 400 400" });
       // this.gloveCloneInsideVertical.attr({ viewBox: "0 0 400 400" });
       const g = f.selectAll(
@@ -691,23 +687,22 @@ export class GloveApiService implements OnDestroy {
       });
     });
 
-    Snap.load("//nystix.com/wp-content/uploads/2021/01/nys_infield_swelt_side.svg", (f) => {
+    Snap.load("https://nystix.com/wp-content/uploads/2021/01/nys_infield_swelt_side.svg", (f) => {
       this.svgSide.attr({ viewBox: "-50 0 400 400" });
       // this.gloveCloneSideVertical.attr({ viewBox: "0 0 400 400" });
       const g = f.selectAll(
-        "#inf_x5F_vw1_x5F_thbi, #inf_x5F_vw1_x5F_mid, #inf_x5F_vw1_x5F_indi, #inf_x5F_vw1_x5F_wst, #inf_x5F_vw1_x5F_logo, #inf_x5F_vw1_x5F_plm, #inf_x5F_vw1_x5F_bnd, #inf_x5F_vw1_x5F_indo, #inf_x5F_vw1_x5F_thbo, #inf_x5F_vw1_x5F_wlt, #inf_x5F_vw1_x5F_web, #inf_x5F_vw1_x5F_stch,  #inf_x5F_vw1_x5F_lce, #inf_x5F_open_x5F_side"
+        "#inf_x5F_vw1_x5F_thbi, #inf_x5F_vw1_x5F_mid, #inf_x5F_vw1_x5F_indo, #inf_x5F_vw1_x5F_wst, #inf_x5F_vw1_x5F_plm, #inf_x5F_vw1_x5F_bnd, #inf_x5F_vw1_x5F_indi, #inf_x5F_vw1_x5F_thbo, #inf_x5F_vw1_x5F_wlt, #inf_x5F_vw1_x5F_web, #inf_x5F_vw1_x5F_stch,  #inf_x5F_vw1_x5F_lce, #inf_x5F_open_x5F_side"
       );
 
       g.forEach((el, i) => {
         const p = [
           "inf_x5F_vw1_x5F_thbi",
           "inf_x5F_vw1_x5F_mid",
-          "inf_x5F_vw1_x5F_indi",
+          "inf_x5F_vw1_x5F_indo",
           "inf_x5F_vw1_x5F_wst",
-          "inf_x5F_vw1_x5F_logo",
           "inf_x5F_vw1_x5F_plm",
           "inf_x5F_vw1_x5F_bnd",
-          "inf_x5F_vw1_x5F_indo",
+          "inf_x5F_vw1_x5F_indi",
           "inf_x5F_vw1_x5F_thbo",
           "inf_x5F_vw1_x5F_wlt",
           "inf_x5F_vw1_x5F_web",
@@ -728,7 +723,7 @@ export class GloveApiService implements OnDestroy {
   loadFbase() {
     const self = this;
 
-    Snap.load("//nystix.com/wp-content/uploads/2021/01/nys_fbase_back_view.svg", function (f) {
+    Snap.load("https://nystix.com/wp-content/uploads/2021/01/nys_fbase_back_view.svg", function (f) {
       self.svgMain.attr({ viewBox: "0 0 400 400" });
       // //MainVertical.attr({viewBox:"0 0 400 400"});
       const g = f.selectAll(
@@ -757,7 +752,7 @@ export class GloveApiService implements OnDestroy {
       });
     });
 
-    Snap.load("//nystix.com/wp-content/uploads/2021/01/nys_fbase_inside_view.svg", function (f) {
+    Snap.load("https://nystix.com/wp-content/uploads/2021/01/nys_fbase_inside_view.svg", function (f) {
       self.svgInside.attr({ viewBox: "0 0 400 400" });
       // //InsideVertical.attr({viewBox:"0 0 400 400"});
       const g = f.selectAll(
@@ -780,7 +775,7 @@ export class GloveApiService implements OnDestroy {
       });
     });
 
-    Snap.load("//nystix.com/wp-content/uploads/2021/01/nys_fbase_side_view.svg", function (f) {
+    Snap.load("https://nystix.com/wp-content/uploads/2021/01/nys_fbase_side_view.svg", function (f) {
       self.svgSide.attr({ viewBox: "0 0 400 400" });
       // //SideVertical.attr({viewBox:"0 0 400 400"});
       const g = f.selectAll(

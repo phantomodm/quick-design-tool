@@ -7,3 +7,14 @@
 .form-control {
   background-color: #fff !important;
 }
+
+.carousel-control-next-icon{
+  background-image: url("https://nystix.com/wp-content/uploads/2021/01/keyboard_arrow_right-32px1.svg");
+}
+.carousel-control-prev-icon{
+  background-image: url("https://nystix.com/wp-content/uploads/2021/01/keyboard_arrow_left-32px1.svg");
+}
+
+.sr-only {
+  display:none;
+}
