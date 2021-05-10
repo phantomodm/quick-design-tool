@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { NgbCarouselConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgbCarousel, NgbCarouselConfig, NgbSlideEvent, NgbSlideEventSource  } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-image-carousel',
@@ -9,13 +9,16 @@ import { NgbCarouselConfig } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ImageCarouselComponent implements OnInit {
 
-  showNavigationArrows = true;
+  @ViewChild('gloveSlide',{static: true}) gloveSlide: NgbCarousel;
+
   constructor(config: NgbCarouselConfig) {
-    config.showNavigationArrows = true;
+    config.showNavigationArrows = false;
     config.showNavigationIndicators = false;
-   }
+    config.interval = 0;
+  }
 
   ngOnInit(): void {
   }
+
 
 }

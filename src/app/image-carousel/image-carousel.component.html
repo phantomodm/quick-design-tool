@@ -1,17 +1,24 @@
-<ngb-carousel>
-  <ng-template ngbSlide>
+<ngb-carousel #gloveSlide="ngbCarousel"  >
+  <ng-template  ngbSlide id="slide-0" >
     <div>
       <svg id="svgMain"></svg>
     </div>
   </ng-template>
-  <ng-template ngbSlide>
+  <ng-template ngbSlide id="slide-1">
     <div>
       <svg id="svgInside"></svg>
     </div>
   </ng-template>
-  <ng-template ngbSlide>
+  <ng-template ngbSlide id="slide-2">
     <div>
       <svg id="svgSide"></svg>
     </div>
   </ng-template>
 </ngb-carousel>
+<div class="clone-container">
+  <div class="clone-container_items">
+    <svg id="clone-0" (click)="gloveSlide.select('slide-0')" style="cursor: pointer;"></svg>
+    <svg id="clone-1" (click)="gloveSlide.select('slide-1')" style="cursor: pointer;"></svg>
+    <svg id="clone-2" (click)="gloveSlide.select('slide-2')" style="cursor: pointer;"></svg>
+  </div>
+</div>

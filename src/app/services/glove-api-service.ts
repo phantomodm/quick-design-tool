@@ -47,6 +47,10 @@ export class GloveApiService implements OnDestroy {
   stickyView: any;
   defaultFill = "#c0c0c0";
   strokeFill = "#808080";
+  clone: number;
+  clone1: any;
+  clone2: any;
+  clone3: any;
 
   constructor(private customData: GloveDataService) {
     //this.colors = gloveColor;
@@ -107,15 +111,28 @@ export class GloveApiService implements OnDestroy {
       });
   }
 
+  cloneCanvas(){
+    console.log("clone")
+    this.clone1.append(this.svgMain.clone(this.oView))
+    this.clone2.append(this.svgInside.clone(this.iView))
+    this.clone3.append(this.svgSide.clone(this.sView))
+  }
+
   initCanvas() {
     this.svgMain = Snap("#svgMain");
     this.svgInside = Snap("#svgInside");
     this.svgSide = Snap("#svgSide");
+    this.clone1 = Snap("#clone-0");
+    this.clone2 = Snap("#clone-1");
+    this.clone3 = Snap("#clone-2");
 
     /* Glove Group Containers */
     (this.oView = this.svgMain.group()),
-      (this.iView = this.svgInside.group()),
-      (this.sView = this.svgSide.group());
+    (this.iView = this.svgInside.group()),
+    (this.sView = this.svgSide.group());
+
+
+
     console.log("Snap initiated");
 
     switch (this.imageBase) {
@@ -215,11 +232,15 @@ export class GloveApiService implements OnDestroy {
   }
 
   refreshCanvas(){
-    //this.sticky.append(this.svgMain.clone())
+    if( $("#nystix-sticky").length ){
+      this.sticky.append( this.svgMain.clone() )
+    }
+
     return;
   }
 
   applyFillToCanvas(sectionToFill, colorValue, gloveType) {
+    //this.cloneCanvas();
     try {
       if( this.sticky === undefined ){
         console.log('Initiate Sticky')
@@ -293,6 +314,7 @@ export class GloveApiService implements OnDestroy {
       const el = value.element;
       const svgLayerId = value.svgBase;
       const svgElement = `#${glveType}${svgLayerId}`;
+
 
       switch (bodyPart) {
         case "body":
@@ -373,7 +395,12 @@ export class GloveApiService implements OnDestroy {
         default:
           this.refreshCanvas();
       }
+
+
     });
+    setTimeout(() => {
+      this.cloneCanvas();
+    }, 1500);
   }
 
   applyHtmlInput(element: string, value: string, event?: string) {
@@ -426,6 +453,7 @@ export class GloveApiService implements OnDestroy {
         grp.add(el);
         break;
     }
+
   };
 
   // ** Loads Catcher's mitt glove canvas */
@@ -512,6 +540,8 @@ export class GloveApiService implements OnDestroy {
         self.svgSide.append(self.sView);
       });
     });
+
+    this.cloneCanvas();
   }
 
   // ** Loads outfield glove canvas */
@@ -613,6 +643,8 @@ export class GloveApiService implements OnDestroy {
         // self.defaultColor();
       });
     });
+
+    self.cloneCanvas();
   }
 
   // ** Loads infield glove canvas */
@@ -717,6 +749,11 @@ export class GloveApiService implements OnDestroy {
         self.svgSide.append(self.sView);
       });
     });
+    console.log('clone running')
+    setTimeout(() => {
+      self.cloneCanvas();
+    }, 3000);
+
   }
 
   // ** Loads first base mitt canvas */
@@ -803,6 +840,8 @@ export class GloveApiService implements OnDestroy {
         self.svgSide.append(self.sView);
       });
     });
+
+    self.cloneCanvas();
   }
 
   loadCatcherFB() {
@@ -899,6 +938,8 @@ export class GloveApiService implements OnDestroy {
         // //SideVertical.append(self.svgSide.clone(self.sView));
       });
     });
+
+    self.cloneCanvas();
   }
 
   loadInfield2Welt() {
@@ -994,6 +1035,8 @@ export class GloveApiService implements OnDestroy {
         self.svgSide.append(self.sView);
       });
     });
+
+    self.cloneCanvas();
   }
 
   // ** Loads pitcher glove canvas */
@@ -1073,6 +1116,8 @@ export class GloveApiService implements OnDestroy {
         // self.defaultColor();
       });
     });
+
+    self.cloneCanvas();
   }
 
   @HostListener("window:beforeunload", ["$event"])

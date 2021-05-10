@@ -1,0 +1,13 @@
+.clone-container {
+  display: flex;
+  align-content: space-between;
+}
+
+.clone-container_items {
+  display: flex;
+  width: 100%;
+}
+
+.clone-image {
+  width: 200px;
+}
